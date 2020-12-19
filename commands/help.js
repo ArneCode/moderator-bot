@@ -6,6 +6,7 @@ function help(msg, params, info) {
 		for (let command of commands) {
 			if (command.alias == params[0]) {
 				msg.author.send(`This is help for the \`${command.alias}\` command:
+				this command can only be used by: \`${messageHandler.number_to_role(command.role_needed)}\`
         ${command.info}
         ${command.help}`);
 
@@ -24,7 +25,6 @@ function help(msg, params, info) {
 		for (let command of commands) {
 			text += `
       \`${command.alias}\`:
-      this command can only be used by: \`${messageHandler.number_to_role(command.role_needed)}\`
       ${command.info}`;
 		}
 		msg.author.send(text);

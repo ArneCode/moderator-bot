@@ -191,7 +191,7 @@ module.exports = { set_mode, check };
 addCommand(
 	'notox',
 	set_mode,
-	'mod',
+	2,
 	'The `notox` command sets the mode(s) of the noTox toxicity check.',
 	`use: \`-notox <mode1> <mode2> <...>..\`
 possible modes are:

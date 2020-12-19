@@ -55,8 +55,7 @@ async function handle(msg, bot) {
 				for (let command of commands) {
 					if (command.alias == alias) {
 						let highEnough = false;
-						for (let role of roles) {
-							if (roles_to_number(role)>=command.role_needed) {
+							if (roles_to_number(roles)>=command.role_needed) {
 								highEnough = true;
 								if (!command.channelEnabled) {
 									command.callback(msg, parameters, {
@@ -67,7 +66,7 @@ async function handle(msg, bot) {
 									return;
 								}
 							}
-						}
+						
 						if (!highEnough) {
 							msg.channel.send(
 								`<@${
@@ -98,8 +97,7 @@ async function handle(msg, bot) {
 			for (let command of commands) {
 				if (command.alias == alias) {
 					let highEnough = false;
-					for (let role of roles) {
-						if (roles_to_number(role) >= command.role_needed) {
+						if (roles_to_number(roles) >= command.role_needed) {
 							highEnough = true;
 							if (command.channelEnabled || command.channelEnabled == null) {
 								command.callback(msg, parameters, {
@@ -111,7 +109,7 @@ async function handle(msg, bot) {
 								return;
 							}
 						}
-					}
+					
 					if (!highEnough) {
 						msg.channel.send(
 							`<@${
