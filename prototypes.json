@@ -1,0 +1,14 @@
+{
+"channel":{
+"_id":"_id",
+"prefix":"-",
+"name":"#channel_name",
+"active":true,
+"noTox":{
+"modes":[
+{"name":"off"}
+],
+"silenced":[]
+}
+}
+}
