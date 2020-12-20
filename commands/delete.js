@@ -8,31 +8,13 @@ async function msg(msg, params) {
 		msg.channel.send(
 			'please confirm using Y/N. Do you really want to do this?'
 		);
-		let confirmed = false;
-		while (!confirmed) {
-			let new_msg = yield;
-			if (
-				['yes', 'y', 'absolutely', 'ja'].includes(new_msg.content.toLowerCase())
-			) {
-				if (new_msg.author.id == msg.author.id) {
-					confirmed = true;
-				}
-			} else if (
-				['no', 'n', 'nein', 'absolutely not'].includes(
-					new_msg.content.toLowerCase()
-				)
-			) {
-				if (new_msg.author.id == msg.author.id) {
-					msg.channel.send('ok');
-					return;
-				}
-			} else {
-				if (new_msg.author.id == msg.author.id) {
-					msg.channel.send('please respond using Y/N');
-				}
-			}
-		}
-		msg.channel.bulkDelete(100);
+		return await yield_confirm(msg,async ()=>{
+		  await msg.channel.bulkDelete(100);
+		  msg.channel.send(`All messages in this channel have been deleted by <@${msg.author.id}>`)
+		},()=>{
+		  msg.channel.send("ok")
+		})
+		
 	} else {
 		let matches = [];
 		params.join(' ').replace(idrx, match => {
