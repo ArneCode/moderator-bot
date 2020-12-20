@@ -11,9 +11,10 @@ function addCommand(
 	role_needed = '@everyone',
 	info = 'no info provided',
 	help = 'no additional help provided',
-	channelEnabled = true
+	channelEnabled = true,
+	multiple_calls=false
 ) {
-	commands.push({ alias, callback, role_needed, channelEnabled, info, help });
+	commands.push({ alias, callback, role_needed, channelEnabled, info, help,multiple_calls });
 }
 require('./commands/date.js');
 require('./commands/channels.js');
@@ -22,7 +23,16 @@ require('./commands/setPrefix.js');
 require('./commands/delete.js');
 require('./commands/help.js');
 async function handleDM(msg, bot) {}
+let toExec=null
 async function handle(msg, bot) {
+  if(toExec){
+    let result = await toExec.next(msg)
+    console.log(result)
+    if(result.done){
+      toExec=null
+    }
+    return
+  }
 	let channelType = msg.channel.type;
 	if (channelType == 'dm') {
 		return handleDM(msg, bot);
@@ -32,7 +42,6 @@ async function handle(msg, bot) {
 	}
 	const { channel, guild, member, author } = msg;
 	let roles = member.roles.cache.array();
-	console.log(roles_to_number(roles))
 	if (author.id == bot.user.id) {
 		return;
 	}
@@ -58,11 +67,18 @@ async function handle(msg, bot) {
 							if (roles_to_number(roles)>=command.role_needed) {
 								highEnough = true;
 								if (!command.channelEnabled) {
-									command.callback(msg, parameters, {
+								  
+									let result=await command.callback(msg, parameters, {
 										guildConfig,
 										commands,
 										globalInfo
 									});
+									if(command.multiple_calls){
+									  console.log("iterable")
+									  if(!result.next().done){
+									    toExec=result
+									  }
+									}
 									return;
 								}
 							}
@@ -100,12 +116,22 @@ async function handle(msg, bot) {
 						if (roles_to_number(roles) >= command.role_needed) {
 							highEnough = true;
 							if (command.channelEnabled || command.channelEnabled == null) {
-								command.callback(msg, parameters, {
+								let result=await command.callback(msg, parameters, {
 									channelConfig,
 									guildConfig,
 									commands,
 									globalInfo
 								});
+								
+								if(command.multiple_calls){
+								  console.log("iterable")
+								  console.log("result:",result)
+								  if(!result.next().done){
+								    toExec=result
+								  }
+								}else{
+								  console.log("not Iterable")
+								}
 								return;
 							}
 						}
@@ -147,4 +173,11 @@ function roles_to_number(roles){
 }
 function number_to_role(n){
   return ["user","mod","admin"][n-1]
+}
+function isIterable(obj) {
+  // checks for null and undefined
+  if (obj == null) {
+    return false;
+  }
+  return typeof obj[Symbol.iterator] === 'function';
 }
